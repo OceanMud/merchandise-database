@@ -8,6 +8,7 @@ const {
   sendCancellationEmail,
 } = require("../emails/account");
 const router = new express.Router();
+const path = require("path");
 
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
