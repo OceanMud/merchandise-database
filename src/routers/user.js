@@ -8,7 +8,7 @@ const {
   sendCancellationEmail,
 } = require("../emails/account");
 const router = new express.Router();
-const path = require("path");
+// const path = require("path");
 
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
@@ -17,14 +17,8 @@ router.post("/users", async (req, res) => {
     await user.save();
     sendWelcomeEmail(user.email, user.name);
     const token = await user.generateAuthToken();
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
-    );
-    res.cookie("auth_token", token);
+
+    // res.cookie("auth_token", token, { sameSite: false });
     res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
@@ -38,7 +32,7 @@ router.post("/users/login", async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken();
-    res.cookie("auth_token", token);
+    // res.cookie("auth_token", token);
     res.send({ user, token });
   } catch (e) {
     res.status(400).send();
@@ -47,9 +41,12 @@ router.post("/users/login", async (req, res) => {
 
 router.post("/users/logout", auth, async (req, res) => {
   try {
-    req.user.tokens = req.user.tokens.filter((token) => {
-      return token.token !== req.token;
-    });
+    // req.user.tokens = req.user.tokens.filter((token) => {
+    //   return token.token !== req.token;
+    // });
+
+    req.user.tokens = [];
+
     await req.user.save();
 
     res.send();
