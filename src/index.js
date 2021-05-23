@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(
-  cors({ origin: "https://bunniesjourney.netlify.app/", credentials: true })
+  cors({ origin: "https://bunniesjourney.netlify.app", credentials: true })
 );
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
