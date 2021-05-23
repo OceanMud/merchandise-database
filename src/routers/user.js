@@ -3,6 +3,8 @@ const multer = require("multer");
 const sharp = require("sharp");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
+const bcrypt = require("bcryptjs");
+
 const {
   sendWelcomeEmail,
   sendCancellationEmail,
@@ -71,7 +73,22 @@ router.get("/users/me", auth, async (req, res) => {
 
 router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
+
+  console.log(req.body.oldPassword);
+
+  if (req.body.oldPassword) {
+    const isMatch = await bcrypt.compare(
+      req.body.oldPassword,
+      req.user.password
+    );
+    console.log(isMatch);
+    if (!isMatch) {
+      return res.status(400).send({ error: "Invalid updates!" });
+    }
+  }
+  console.log(req.body);
+
+  const allowedUpdates = ["name", "email", "password", "age", "oldPassword"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
